@@ -1,0 +1,453 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+</head>
+<body>
+<title>Miami Octubre 2026</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;800&family=Atkinson+Hyperlegible:wght@400;700&family=JetBrains+Mono:wght@500;700&display=swap">
+<style>
+/* Layout: boarding-pass strip on top, highway-sign day tabs, one vertical route per day, shared checklist below. */
+:root {
+  --bg: #eef3f4;
+  --surface: #ffffff;
+  --ink: #12222e;
+  --muted: #5a6b76;
+  --line: #d3dde1;
+  --accent: #0b7f86;      /* Biscayne teal */
+  --accent-ink: #ffffff;
+  --sign: #136b45;        /* highway sign green */
+  --sign-ink: #ffffff;
+  --hot: #d8466e;         /* flamingo, used sparingly */
+  --done: #8aa0a8;
+  --soft: #e3eef0;
+  --f-display: "Big Shoulders Display", "Arial Narrow", Impact, sans-serif;
+  --f-body: "Atkinson Hyperlegible", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --f-mono: "JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0d171d; --surface: #15232b; --ink: #e5eef1; --muted: #93a7b0; --line: #26373f;
+    --accent: #3cc0c6; --accent-ink: #062226; --sign: #1f8a5c; --sign-ink: #f3fff8;
+    --hot: #f07596; --done: #5d7079; --soft: #1b2e37; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0d171d; --surface: #15232b; --ink: #e5eef1; --muted: #93a7b0; --line: #26373f;
+  --accent: #3cc0c6; --accent-ink: #062226; --sign: #1f8a5c; --sign-ink: #f3fff8;
+  --hot: #f07596; --done: #5d7079; --soft: #1b2e37; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--bg); color: var(--ink);
+  font-family: var(--f-body); font-size: 16px; line-height: 1.5;
+}
+.wrap {
+  max-width: 880px; margin: 0 auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 24px 64px;
+  display: flex; flex-direction: column; gap: 28px;
+}
+h1, h2, h3 { font-family: var(--f-display); text-wrap: balance; margin: 0; letter-spacing: .01em; }
+h1 { font-size: clamp(2.4rem, 7vw, 3.6rem); font-weight: 800; line-height: .95; text-transform: uppercase; }
+h2 { font-size: 1.9rem; font-weight: 800; text-transform: uppercase; }
+.lede { color: var(--muted); margin: 8px 0 0; max-width: 60ch; }
+.eyebrow { font-family: var(--f-mono); font-size: .72rem; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+a { color: var(--accent); }
+:focus-visible { outline: 3px solid var(--hot); outline-offset: 2px; }
+
+/* boarding pass */
+.passes { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; }
+.pass {
+  background: var(--surface); border: 1px solid var(--line); border-radius: 10px;
+  display: grid; grid-template-columns: 1fr auto; gap: 4px 12px; padding: 14px 16px;
+  position: relative;
+}
+.pass::after {
+  content: ""; position: absolute; top: 10px; bottom: 10px; right: 92px;
+  border-left: 2px dashed var(--line);
+}
+.pass .route { font-family: var(--f-display); font-size: 1.9rem; font-weight: 800; line-height: 1; }
+.pass .route span { color: var(--accent); }
+.pass .meta { font-family: var(--f-mono); font-size: .78rem; color: var(--muted); grid-column: 1; }
+.pass .stub { grid-column: 2; grid-row: 1 / span 3; width: 72px; text-align: center; align-self: center; font-family: var(--f-mono); }
+.pass .stub b { display: block; font-size: 1.4rem; color: var(--ink); }
+.pass .stub small { font-size: .65rem; color: var(--muted); letter-spacing: .1em; }
+.pass .times { font-family: var(--f-mono); font-variant-numeric: tabular-nums; font-weight: 700; }
+
+/* tabs as highway signs */
+.tabs { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+.tab {
+  appearance: none; border: 2px solid var(--sign); background: var(--surface); color: var(--ink);
+  border-radius: 8px; padding: 8px 6px; cursor: pointer; text-align: left;
+  display: flex; flex-direction: column; gap: 2px; min-width: 0;
+}
+.tab .d { font-family: var(--f-display); font-weight: 800; font-size: 1.5rem; line-height: 1; text-transform: uppercase; }
+.tab .t { font-size: .74rem; color: var(--muted); line-height: 1.25; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+.tab[aria-selected="true"] { background: var(--sign); color: var(--sign-ink); box-shadow: inset 0 0 0 2px var(--sign), inset 0 0 0 4px var(--sign-ink); }
+.tab[aria-selected="true"] .t { color: var(--sign-ink); opacity: .85; }
+.tab .prog { font-family: var(--f-mono); font-size: .68rem; }
+
+.dayhead { display: flex; flex-wrap: wrap; gap: 12px; align-items: end; justify-content: space-between; }
+.dayhead > div { min-width: 0; }
+.actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.btn {
+  appearance: none; border: 1px solid var(--accent); background: transparent; color: var(--accent);
+  border-radius: 999px; padding: 7px 14px; font: 700 .85rem var(--f-body); cursor: pointer; text-decoration: none;
+  display: inline-flex; align-items: center; gap: 6px;
+}
+.btn.solid { background: var(--accent); color: var(--accent-ink); }
+
+/* timeline */
+.route-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
+.stop { display: grid; grid-template-columns: 64px 28px 1fr; gap: 0 10px; }
+.stop .time { font-family: var(--f-mono); font-weight: 700; font-variant-numeric: tabular-nums; padding-top: 14px; text-align: right; font-size: .95rem; }
+.stop .rail { position: relative; display: flex; justify-content: center; }
+.stop .rail::before { content: ""; position: absolute; top: 0; bottom: 0; width: 3px; background: var(--line); }
+.stop:first-child .rail::before { top: 22px; }
+.stop:last-child .rail::before { bottom: calc(100% - 22px); }
+.dot {
+  position: relative; margin-top: 12px; width: 22px; height: 22px; border-radius: 50%;
+  border: 3px solid var(--accent); background: var(--surface); cursor: pointer; padding: 0;
+  display: grid; place-items: center; color: var(--accent-ink); font-size: 12px; font-weight: 700;
+}
+.stop.is-done .dot { background: var(--accent); }
+.stop.is-done .dot::after { content: "✓"; }
+.card { padding: 10px 0 18px; min-width: 0; }
+.card h3 { font-size: 1.35rem; font-weight: 800; line-height: 1.1; }
+.stop.is-done .card h3, .stop.is-done .time { color: var(--done); text-decoration: line-through; text-decoration-thickness: 2px; }
+.kind { font-family: var(--f-mono); font-size: .68rem; letter-spacing: .1em; text-transform: uppercase; color: var(--accent); }
+.kind.food { color: var(--hot); }
+.addr { color: var(--muted); font-size: .9rem; margin: 2px 0 0; overflow-wrap: anywhere; }
+.note { margin: 6px 0 0; font-size: .92rem; max-width: 62ch; }
+.note .warn { color: var(--hot); font-weight: 700; }
+.links { display: flex; flex-wrap: wrap; gap: 6px 14px; margin-top: 6px; font-size: .88rem; font-weight: 700; }
+.drive {
+  grid-column: 3; font-family: var(--f-mono); font-size: .74rem; color: var(--muted);
+  display: inline-flex; gap: 6px; align-items: center; margin: -8px 0 4px;
+}
+.drive-row { display: grid; grid-template-columns: 64px 28px 1fr; gap: 0 10px; }
+.drive-row .rail { position: relative; }
+.drive-row .rail::before { content: ""; position: absolute; left: 50%; transform: translateX(-50%); top: 0; bottom: 0; width: 3px; background: repeating-linear-gradient(var(--line) 0 5px, transparent 5px 9px); }
+
+.tips { background: var(--soft); border-radius: 10px; padding: 14px 16px; }
+.tips h3 { font-size: 1.1rem; text-transform: uppercase; margin-bottom: 6px; }
+.tips ul { margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 4px; }
+
+.swapbar { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; font-size: .9rem; color: var(--muted); }
+
+/* checklist */
+.checks { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 0 24px; }
+.checks li { border-bottom: 1px solid var(--line); display: flex; align-items: center; gap: 10px; }
+.checks li label { flex: 1; min-width: 0; }
+.who { font: 700 .78rem var(--f-body); color: var(--accent); background: var(--surface); border: 1px solid var(--line); border-radius: 999px; padding: 4px 8px; flex: none; }
+.checks label { display: flex; gap: 10px; align-items: flex-start; padding: 10px 0; cursor: pointer; }
+.checks input { width: 20px; height: 20px; margin-top: 2px; accent-color: var(--accent); flex: none; }
+.checks .ct { min-width: 0; }
+.checks .ct small { display: block; color: var(--muted); font-size: .82rem; }
+.checks input:checked + .ct > span { text-decoration: line-through; color: var(--done); }
+
+.status { font-family: var(--f-mono); font-size: .72rem; color: var(--muted); }
+.status.live::before { content: "● "; color: var(--sign); }
+footer { color: var(--muted); font-size: .82rem; }
+
+@media (max-width: 520px) {
+  .tabs { grid-template-columns: repeat(2, 1fr); }
+  .stop, .drive-row { grid-template-columns: 50px 24px 1fr; gap: 0 8px; }
+  .stop .time { font-size: .85rem; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .dot, .tab, .btn { transition: background-color .15s, color .15s; }
+}
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="eyebrow">Sebastián, Joaquín y Álvaro · 20–23 octubre 2026</div>
+    <h1>Miami Octubre 2026</h1>
+    <p class="lede">Ruta día por día con auto alquilado. Tocá el círculo de cada parada para marcarla como hecha, y usá “Cómo llegar” para abrir Google Maps desde donde estén.</p>
+  </header>
+
+  <section class="passes" aria-label="Vuelos">
+    <div class="pass">
+      <div class="route">VVI <span>→</span> MIA</div>
+      <div class="meta">OB 766 · Lun 19 Oct · A330-200</div>
+      <div class="meta times">Sale 23:35 · Llega 06:25 (20 Oct)</div>
+      <div class="stub"><small>ASIENTO</small><b>12A</b></div>
+    </div>
+    <div class="pass">
+      <div class="route">MIA <span>→</span> VVI</div>
+      <div class="meta">OB 767 · Vie 23 Oct · A330-200</div>
+      <div class="meta times">Sale 21:00 · Llega 03:50 (24 Oct)</div>
+      <div class="stub"><small>ASIENTO</small><b>13A</b></div>
+    </div>
+  </section>
+
+  <nav class="tabs" role="tablist" aria-label="Días" id="tabs"></nav>
+
+  <section id="day" aria-live="polite"></section>
+
+  <section aria-labelledby="pend-h" style="display:flex;flex-direction:column;gap:12px">
+    <div class="dayhead">
+      <div>
+        <h2 id="pend-h">Pendientes antes de viajar</h2>
+        <div class="status" id="sync">Guardando solo en este dispositivo</div>
+      </div>
+      <div class="status" id="count"></div>
+    </div>
+    <ul class="checks" id="checks"></ul>
+  </section>
+
+  <footer>Horarios y tiempos de manejo son estimados. Confirmá aperturas en Google Maps el día anterior. Distancias pensadas desde el Holiday Inn Express Miramar.</footer>
+</div>
+
+<script>
+const HOTEL = "Holiday Inn Express & Suites Miramar, 2700 SW 145th Ave, Miramar, FL 33027";
+
+const DAYS = {
+  d20: {
+    tab: "Mar 20", title: "Llegada, bancos y Costco", fixed: true,
+    stops: [
+      { id: "arr", time: "06:25", kind: "Vuelo", name: "Llegada a Miami (MIA)", addr: "Miami International Airport", q: "Miami International Airport",
+        note: "Migración, aduana y equipaje. Los vuelos de Bolivia suelen tardar más de 1 h solo en entregar las maletas: calculen 2,5–3 h en total." },
+      { id: "car", time: "~09:15", kind: "Auto", name: "Retiro del auto · Rental Car Center", addr: "3900 NW 25th St, Miami, FL 33142", q: "MIA Rental Car Center, 3900 NW 25th St, Miami, FL",
+        note: "Se llega con el tren MIA Mover desde el 3er piso de la terminal. Pidan SUV o minivan para 6 maletas y activen el programa de peajes.", drive: "20 min · 836 oeste" },
+      { id: "bofa", time: "10:00", kind: "Banco", name: "Bank of America · W Flagler", addr: "10081 W Flagler St, Miami, FL", q: "Bank of America, 10081 W Flagler St, Miami, FL",
+        note: "Trámites de los tres: calculen 1,5–2 h. Lleven pasaportes. <span class=\"warn\">Saquen cita a las 10:00 (si se puede, una para cada uno a la misma hora con distintos ejecutivos).</span> Las maletas en el baúl, nada a la vista.", drive: "15 min · NW 87th Ave al norte" },
+      { id: "fatty", time: "~12:15", kind: "Almuerzo", food: true, name: "Fatty Crab", addr: "2000 NW 87th Ave #7, Doral, FL 33172", q: "Fatty Crab, 2000 NW 87th Ave #7, Doral, FL 33172",
+        note: "Abre lun–jue desde las 11:30, así que no hay apuro si el banco se alarga.", drive: "35–40 min · I-75 / Turnpike, hay peaje" },
+      { id: "chase", time: "~14:15", kind: "Banco", name: "Chase · Cobblestone Plaza", addr: "3221 SW 160th Ave, Miramar, FL 33027", q: "Chase Bank, 3221 SW 160th Ave, Miramar, FL 33027",
+        note: "Trámites de los tres: otras 1,5–2 h. Saquen cita a las 14:00–14:30 en chase.com.", drive: "5 min" },
+      { id: "hotel", time: "~16:15", kind: "Hotel", name: "Holiday Inn Express & Suites Miramar", addr: "2700 SW 145th Ave, Miramar, FL 33027", q: HOTEL,
+        note: "Llegan después del check-in de las 15:00: habitación lista, sin pedir nada especial.", drive: "8 min" },
+      { id: "costco", time: "~16:45", kind: "Compras", name: "Costco Pembroke Pines", addr: "15915 Pines Blvd #742b, Pembroke Pines, FL 33027", q: "Costco, 15915 Pines Blvd, Pembroke Pines, FL 33027",
+        note: "Necesitan membresía activa. Crédito solo <b>Visa</b>; débito con PIN y efectivo sí. Cierra 20:30 entre semana.", drive: "8 min" },
+      { id: "hotel2", time: "~19:00", kind: "Hotel", name: "Pasar por el hotel a dejar compras", addr: "2700 SW 145th Ave, Miramar", q: HOTEL,
+        note: "Para no dejar nada de valor en el auto durante la cena.", drive: "5 min" },
+      { id: "dinner1", time: "~19:45", kind: "Cena", food: true, name: "Cena en Pembroke Gardens", addr: "527 SW 145th Terrace, Pembroke Pines, FL 33027", q: "Shops at Pembroke Gardens, 527 SW 145th Terrace, Pembroke Pines, FL 33027",
+        note: "Al aire libre, muchas opciones para elegir en el momento." }
+    ],
+    tips: [
+      "Peajes: la Turnpike y la 836 son sin cabina. Sin el programa de peajes de la rentadora, llegan multas.",
+      "Dolphin Mall queda a 10 min de Doral, pero hoy van con todas las maletas: mejor dejarlo para el viernes.",
+      "Gasolinera de Costco: la más barata de la zona."
+    ]
+  },
+  d21: {
+    tab: "Mié 21", title: "Sawgrass Mills", fixed: false,
+    stops: [
+      { id: "vanilla", time: "08:30", kind: "Desayuno", food: true, name: "Vanilla Espresso French Café", addr: "11679 City Hall Promenade, Miramar, FL", q: "Vanilla Espresso French Cafe, 11679 City Hall Promenade, Miramar, FL",
+        note: "Desayuno francés en Miramar Town Center. Confirmen el horario de apertura.", drive: "20–25 min · I-75 norte" },
+      { id: "sawgrass", time: "10:00", kind: "Compras", name: "Sawgrass Mills", addr: "12801 W Sunrise Blvd, Sunrise, FL 33323", q: "Sawgrass Mills, 12801 W Sunrise Blvd, Sunrise, FL 33323",
+        note: "Es enorme (más de 350 tiendas). Estacionen cerca de la entrada que más les sirva y anoten el color/número del sector. Almuercen adentro (Colonnade Outlets tiene buenas opciones).", drive: "20 min" },
+      { id: "hotel21", time: "~18:30", kind: "Hotel", name: "Hotel: descargar compras", addr: "2700 SW 145th Ave, Miramar", q: HOTEL, drive: "10 min" },
+      { id: "melt", time: "~20:30", kind: "Postre", food: true, name: "Melt N Dip", addr: "12588 Pines Blvd, Suite 101, Pembroke Pines, FL", q: "Melt N Dip, 12588 Pines Blvd, Pembroke Pines, FL",
+        note: "Chocolate belga y helados, buen cierre de noche. Antes pueden cenar en Pembroke Gardens o en Pines Blvd." }
+    ],
+    tips: [
+      "Lleven una valija vacía o bolsas grandes si van a comprar mucho.",
+      "Sawgrass suele abrir 10:00–21:00 lun–sáb."
+    ]
+  },
+  d22: {
+    tab: "Jue 22", title: "Aventura Mall y Miami Beach", fixed: false,
+    stops: [
+      { id: "aventura", time: "10:30", kind: "Compras", name: "Aventura Mall", addr: "19501 Biscayne Blvd, Aventura, FL 33180", q: "Aventura Mall, 19501 Biscayne Blvd, Aventura, FL 33180",
+        note: "Desayuno en el hotel antes de salir (~40 min de viaje). Almuerzo dentro del mall.", drive: "30–40 min · Collins Ave" },
+      { id: "lincoln", time: "~16:30", kind: "Paseo", name: "Lincoln Road y South Beach", addr: "Lincoln Rd Mall, Miami Beach, FL 33139", q: "Lincoln Road Mall, Miami Beach, FL",
+        note: "Estacionen en un garage municipal cerca de 17th St (más barato y seguro que la calle). Caminen Lincoln Road, la playa y Ocean Drive al atardecer (~19:00).", drive: "a pie" },
+      { id: "fortunata", time: "~19:30", kind: "Cena", food: true, name: "Osteria La Fortunata", addr: "607 Lincoln Rd, Miami Beach, FL 33139", q: "Osteria La Fortunata, 607 Lincoln Rd, Miami Beach, FL 33139",
+        note: "<span class=\"warn\">Reserven.</span> Después, regreso al hotel.", drive: "45 min · I-195 → I-95 → I-75" }
+    ],
+    tips: [
+      "Miami Beach tiene estacionamiento caro y grúa activa: usen garage, no la calle.",
+      "Si prefieren playa con más sol, inviertan: Miami Beach a la mañana y Aventura a la tarde, cenando igual en Lincoln Rd."
+    ]
+  },
+  d23: {
+    tab: "Vie 23", title: "Dolphin Mall, Soya y regreso", fixed: true,
+    stops: [
+      { id: "checkout", time: "09:30", kind: "Hotel", name: "Desayuno y check-out", addr: "2700 SW 145th Ave, Miramar", q: HOTEL,
+        note: "Armen bien las valijas (máx. 2 piezas c/u, 23 kg). Todo al baúl.", drive: "30 min · I-75 sur" },
+      { id: "dolphin", time: "10:15", kind: "Compras", name: "Dolphin Mall", addr: "11401 NW 12th St, Miami, FL 33172", q: "Dolphin Mall, 11401 NW 12th St, Miami, FL 33172",
+        note: "Compras hasta ~15:40. Con maletas en el auto: estacionen en zona visible y no dejen nada a la vista. Almuerzo liviano en el food court para llegar con hambre a Soya.", drive: "10 min · salir 15:45" },
+      { id: "soya", time: "16:00", kind: "Última comida · happy hour", food: true, name: "Soya Sushi Bar", addr: "11402 NW 41st St, Doral, FL 33178", q: "Soya Sushi Bar, 11402 NW 41st St, Doral, FL 33178",
+        note: "Happy hour de 16:00 a 19:00. <span class=\"warn\">Salir a las 18:00 en punto.</span> Quien maneja, sin alcohol.", drive: "10 min" },
+      { id: "gas", time: "~18:10", kind: "Auto", name: "Cargar combustible", addr: "Gasolinera en Doral, antes de la 836", q: "gas station near NW 25th St and NW 42nd Ave, Miami, FL",
+        note: "Las estaciones pegadas al aeropuerto son las más caras.", drive: "10 min" },
+      { id: "return", time: "~18:30", kind: "Auto", name: "Devolución del auto", addr: "3900 NW 25th St, Miami, FL 33142", q: "MIA Rental Car Center, 3900 NW 25th St, Miami, FL",
+        note: "Saquen foto del tablero (combustible y km). MIA Mover a la terminal: en el mostrador de BoA tipo 19:00.", drive: "MIA Mover · 15 min" },
+      { id: "dep", time: "21:00", kind: "Vuelo", name: "OB 767 → Santa Cruz", addr: "Miami International Airport", q: "Miami International Airport",
+        note: "Llegan al mostrador ~19:00, 2 h antes. Hagan el check-in online el jueves para ir directo al despacho de equipaje. Asiento 13A." }
+    ],
+    tips: [
+      "Lo ideal para un vuelo internacional son 3 h; con 2 h alcanza si ya hicieron el check-in online. No estiren la salida de Soya.",
+      "Un viernes a las 18:00 hay tráfico en la 836: si lo ven cargado en Maps, salgan 15 min antes."
+    ]
+  }
+};
+
+const CHECKS = [
+  { id: "car", t: "Reservar auto SUV o minivan", s: "3 personas y hasta 6 maletas" },
+  { id: "toll", t: "Incluir programa de peajes", s: "SunPass / Toll-by-Plate de la rentadora" },
+  { id: "license", t: "Licencias de conducir vigentes", s: "Quién maneja; agregar conductores adicionales" },
+  { id: "bofa", t: "Cita en Bank of America W Flagler", s: "10081 W Flagler St · 10:00 · trámites de los tres" },
+  { id: "chase", t: "Cita en Chase Cobblestone", s: "3221 SW 160th Ave · ~14:15 · trámites de los tres" },
+  { id: "docs", t: "Pasaportes y documentos para bancos", s: "Comprobante de domicilio si lo piden" },
+  { id: "hotelres", t: "Confirmar reserva del hotel", s: "Holiday Inn Express Miramar · llegada ~16:15" },
+  { id: "costco", t: "Membresía Costco y tarjeta Visa", s: "Crédito solo Visa en EE.UU." },
+  { id: "fortunata", t: "Reservar Osteria La Fortunata", s: "Jueves 22, ~19:30" },
+  { id: "hours", t: "Confirmar horarios de Vanilla Espresso y Melt N Dip", s: "Datos sacados de listados de terceros" },
+  { id: "esim", t: "eSIM o plan de datos", s: "Para Maps desde el aeropuerto" },
+  { id: "ob767", t: "Check-in online OB 767", s: "Jueves 22 a las 21:00 abre" }
+];
+
+let state = { checks: {}, done: {}, who: {}, swap: false };
+const PEOPLE = ["Sebastián", "Joaquín", "Álvaro"];
+let activeDay = "d20";
+let docRef = null;
+let canSave = true;
+
+function order() { return state.swap ? ["d20", "d22", "d21", "d23"] : ["d20", "d21", "d22", "d23"]; }
+const DATES = ["Mar 20", "Mié 21", "Jue 22", "Vie 23"];
+const LONG = ["Martes 20 de octubre", "Miércoles 21 de octubre", "Jueves 22 de octubre", "Viernes 23 de octubre"];
+
+const enc = encodeURIComponent;
+function placeUrl(q) { return "https://www.google.com/maps/search/?api=1&query=" + enc(q); }
+function goUrl(q) { return "https://www.google.com/maps/dir/?api=1&travelmode=driving&destination=" + enc(q); }
+function dayRouteUrl(stops) {
+  const qs = []; stops.forEach(s => { if (qs[qs.length - 1] !== s.q) qs.push(s.q); });
+  if (qs.length < 2) return placeUrl(qs[0]);
+  return "https://www.google.com/maps/dir/?api=1&travelmode=driving&origin=" + enc(qs[0]) +
+    "&destination=" + enc(qs[qs.length - 1]) +
+    (qs.length > 2 ? "&waypoints=" + qs.slice(1, -1).map(enc).join("%7C") : "");
+}
+function esc(s) { return String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c])); }
+
+function renderTabs() {
+  const el = document.getElementById("tabs");
+  el.innerHTML = "";
+  order().forEach((key, i) => {
+    const d = DAYS[key];
+    const done = d.stops.filter(s => state.done[s.id]).length;
+    const b = document.createElement("button");
+    b.className = "tab"; b.id = "tab-" + key; b.setAttribute("role", "tab");
+    b.setAttribute("aria-selected", key === activeDay ? "true" : "false");
+    b.innerHTML = `<span class="d">${DATES[i]}</span><span class="t">${esc(d.title)}</span><span class="prog">${done}/${d.stops.length}</span>`;
+    b.addEventListener("click", () => { activeDay = key; try { localStorage.setItem("miami-tab", key); } catch (e) {} renderTabs(); renderDay(); });
+    el.appendChild(b);
+  });
+}
+
+function renderDay() {
+  const d = DAYS[activeDay];
+  const idx = order().indexOf(activeDay);
+  const sec = document.getElementById("day");
+  let html = `<div class="dayhead"><div><div class="eyebrow">${LONG[idx]}</div><h2>${esc(d.title)}</h2></div>
+    <div class="actions"><a class="btn solid" href="${dayRouteUrl(d.stops)}" target="_blank" rel="noopener">Ruta del día en Maps</a></div></div>`;
+  if (!d.fixed) {
+    html += `<div class="swapbar" style="margin-top:10px"><span>¿El 21 y el 22 al revés?</span>
+      <button class="btn" id="swap">Intercambiar Mié ↔ Jue</button></div>`;
+  }
+  html += `<ol class="route-list" style="margin-top:16px">`;
+  d.stops.forEach((s, i) => {
+    const done = !!state.done[s.id];
+    html += `<li class="stop${done ? " is-done" : ""}">
+      <div class="time">${esc(s.time)}</div>
+      <div class="rail"><button class="dot" data-stop="${s.id}" aria-pressed="${done}" aria-label="Marcar ${esc(s.name)} como hecho"></button></div>
+      <div class="card">
+        <div class="kind${s.food ? " food" : ""}">${esc(s.kind)}</div>
+        <h3>${esc(s.name)}</h3>
+        <p class="addr">${esc(s.addr)}</p>
+        ${s.note ? `<p class="note">${s.note}</p>` : ""}
+        <div class="links"><a href="${goUrl(s.q)}" target="_blank" rel="noopener">Cómo llegar</a><a href="${placeUrl(s.q)}" target="_blank" rel="noopener">Ver en mapa</a></div>
+      </div></li>`;
+    if (s.drive && i < d.stops.length - 1) {
+      html += `<li class="drive-row"><div></div><div class="rail"></div><div class="drive">↓ ${esc(s.drive)}</div></li>`;
+    }
+  });
+  html += `</ol>`;
+  if (d.tips && d.tips.length) {
+    html += `<div class="tips" style="margin-top:8px"><h3>A tener en cuenta</h3><ul>${d.tips.map(t => `<li>${esc(t)}</li>`).join("")}</ul></div>`;
+  }
+  sec.innerHTML = html;
+  sec.querySelectorAll(".dot").forEach(b => b.addEventListener("click", () => toggle("done", b.dataset.stop)));
+  const sw = document.getElementById("swap");
+  if (sw) sw.addEventListener("click", () => { state.swap = !state.swap; save({ swap: state.swap }); renderTabs(); renderDay(); });
+}
+
+function renderChecks() {
+  const el = document.getElementById("checks");
+  el.innerHTML = CHECKS.map(c => `<li><label for="chk-${c.id}"><input type="checkbox" id="chk-${c.id}" data-check="${c.id}" ${state.checks[c.id] ? "checked" : ""}>
+    <span class="ct"><span>${esc(c.t)}</span><small>${esc(c.s)}</small></span></label>
+    <select class="who" id="who-${c.id}" data-who="${c.id}" aria-label="Responsable de ${esc(c.t)}">
+      <option value="">¿Quién?</option>${PEOPLE.map(p => `<option${state.who[c.id] === p ? " selected" : ""}>${p}</option>`).join("")}
+    </select></li>`).join("");
+  el.querySelectorAll("input").forEach(i => i.addEventListener("change", () => toggle("checks", i.dataset.check)));
+  el.querySelectorAll("select").forEach(s => s.addEventListener("change", () => {
+    state.who = Object.assign({}, state.who, { [s.dataset.who]: s.value });
+    save({ who: { [s.dataset.who]: s.value } });
+  }));
+  const n = CHECKS.filter(c => state.checks[c.id]).length;
+  document.getElementById("count").textContent = `${n} de ${CHECKS.length} listos`;
+}
+
+function renderAll() { renderTabs(); renderDay(); renderChecks(); }
+
+function toggle(group, id) {
+  const v = !state[group][id];
+  state[group] = Object.assign({}, state[group], { [id]: v });
+  save({ [group]: { [id]: v } });
+  if (group === "done") { renderTabs(); renderDay(); } else renderChecks();
+}
+
+let exists = false;
+let chain = Promise.resolve();
+function save(patch) {
+  try { localStorage.setItem("miami-state", JSON.stringify(state)); } catch (e) {}
+  if (!docRef || !canSave) return;
+  chain = chain.then(async () => {
+    try {
+      if (exists) await docRef.update(patch);
+      else { await docRef.set(state); exists = true; }
+    } catch (e) {
+      if (e && e.code === "invalid_argument") {
+        canSave = false;
+        setSync("Solo lectura: pedile al dueño acceso de Colaborador para guardar", false);
+      }
+    }
+  });
+}
+
+function setSync(text, live) {
+  const s = document.getElementById("sync");
+  s.textContent = text; s.classList.toggle("live", !!live);
+}
+
+(function init() {
+  try { const t = localStorage.getItem("miami-tab"); if (t && DAYS[t]) activeDay = t; } catch (e) {}
+  try { const s = JSON.parse(localStorage.getItem("miami-state") || "null"); if (s) { state = Object.assign(state, s); state.who = state.who || {}; } } catch (e) {}
+  renderAll();
+  if (!window.claude || !window.claude.use) return;
+  window.claude.use("db").then(db => {
+    if (!db) return;
+    docRef = db.doc("trip/state");
+    setSync("Compartido con el grupo", true);
+    docRef.onSnapshot(snap => {
+      exists = snap.exists;
+      if (!snap.exists) return;
+      const d = snap.data() || {};
+      state = { checks: Object.assign({}, d.checks || {}), done: Object.assign({}, d.done || {}), who: Object.assign({}, d.who || {}), swap: !!d.swap };
+      renderAll();
+    }, () => setSync("Sin conexión con el grupo; guardando en este dispositivo", false));
+  }).catch(() => {});
+})();
+</script>
+
+</body>
+</html>
