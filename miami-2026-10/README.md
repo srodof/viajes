@@ -41,6 +41,7 @@ Sebastián, Joaquín y Álvaro. Auto alquilado, base en el Holiday Inn Express &
 |---|---|---|
 | 10:30 | Aventura Mall | 19501 Biscayne Blvd, Aventura |
 | ~16:30 | Lincoln Road y South Beach | Lincoln Rd Mall, Miami Beach |
+| ~18:00 | Paquete Joaquin | 161 Crandon Blvd Apt 323, Key Biscayne |
 | ~19:30 | Cena · Osteria La Fortunata (reservar) | 607 Lincoln Rd, Miami Beach |
 
 Miércoles y jueves se pueden intercambiar.
@@ -70,3 +71,4 @@ Miércoles y jueves se pueden intercambiar.
 - [ ] Confirmar horarios de Vanilla Espresso y Melt N Dip
 - [ ] eSIM o plan de datos
 - [ ] Check-in online OB 767 (jueves 22, 21:00)
+- [ ] Retirar paquete de Joaquin en Key Biscayne (jueves ~18:00, llevar identificación)

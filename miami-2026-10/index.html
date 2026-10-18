@@ -260,7 +260,9 @@ const DAYS = {
       { id: "aventura", time: "10:30", kind: "Compras", name: "Aventura Mall", addr: "19501 Biscayne Blvd, Aventura, FL 33180", q: "Aventura Mall, 19501 Biscayne Blvd, Aventura, FL 33180",
         note: "Desayuno en el hotel antes de salir (~40 min de viaje). Almuerzo dentro del mall.", drive: "30–40 min · Collins Ave" },
       { id: "lincoln", time: "~16:30", kind: "Paseo", name: "Lincoln Road y South Beach", addr: "Lincoln Rd Mall, Miami Beach, FL 33139", q: "Lincoln Road Mall, Miami Beach, FL",
-        note: "Estacionen en un garage municipal cerca de 17th St (más barato y seguro que la calle). Caminen Lincoln Road, la playa y Ocean Drive al atardecer (~19:00).", drive: "a pie" },
+        note: "Estacionen en un garage municipal cerca de 17th St (más barato y seguro que la calle). Caminen Lincoln Road, la playa y Ocean Drive al atardecer.", drive: "30 min · Venetian / Rickenbacker (peaje)" },
+      { id: "paquete", time: "~18:00", kind: "Paquete", name: "Paquete Joaquin", addr: "161 Crandon Blvd Apt 323, Key Biscayne, FL 33149", q: "161 Crandon Blvd, Key Biscayne, FL 33149",
+        note: "Joaquín retira el paquete. Lleven identificación y el comprobante de envío. <span class=\"warn\">Salir a las 18:30 para llegar a Fortunata a las 19:30.</span>", drive: "30 min · Rickenbacker / Venetian" },
       { id: "fortunata", time: "~19:30", kind: "Cena", food: true, name: "Osteria La Fortunata", addr: "607 Lincoln Rd, Miami Beach, FL 33139", q: "Osteria La Fortunata, 607 Lincoln Rd, Miami Beach, FL 33139",
         note: "<span class=\"warn\">Reserven.</span> Después, regreso al hotel.", drive: "45 min · I-195 → I-95 → I-75" }
     ],
@@ -304,7 +306,8 @@ const CHECKS = [
   { id: "fortunata", t: "Reservar Osteria La Fortunata", s: "Jueves 22, ~19:30" },
   { id: "hours", t: "Confirmar horarios de Vanilla Espresso y Melt N Dip", s: "Datos sacados de listados de terceros" },
   { id: "esim", t: "eSIM o plan de datos", s: "Para Maps desde el aeropuerto" },
-  { id: "ob767", t: "Check-in online OB 767", s: "Jueves 22 a las 21:00 abre" }
+  { id: "ob767", t: "Check-in online OB 767", s: "Jueves 22 a las 21:00 abre" },
+  { id: "paquete", t: "Retirar paquete de Joaquin", s: "161 Crandon Blvd, Key Biscayne · jueves ~18:00 · llevar identificación" }
 ];
 
 let state = { checks: {}, done: {}, who: {}, swap: false };
